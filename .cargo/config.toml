@@ -1,5 +1,5 @@
 [build]
-target = "arm-unknown-linux-gnueabi" # Raspberry Pi Zero W v1.1
+target = "arm-unknown-linux-gnueabihf" # Raspberry Pi Zero W v1.1
 
-[target.arm-unknown-linux-gnueabi]
-linker = "arm-linux-gnueabi-gcc"
+[target.arm-unknown-linux-gnueabihf]
+linker = "arm-linux-gnueabihf-gcc"
