@@ -1,8 +1,5 @@
-[package]
-name = "rgb-pi-controller"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-anyhow = "1.0.75"
-rppal = "0.15.0"
+[workspace]
+resolver = "2"
+members = [
+    "server",
+]
