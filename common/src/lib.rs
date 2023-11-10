@@ -1,7 +1,7 @@
 use hex::{FromHex, FromHexError};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, PartialOrd)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize, PartialEq, PartialOrd)]
 pub struct Color {
     red: u8,
     green: u8,
