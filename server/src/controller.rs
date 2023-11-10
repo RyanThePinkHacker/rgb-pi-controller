@@ -1,3 +1,4 @@
+use common::Color;
 use rppal::gpio::{Gpio, OutputPin};
 
 const PWD_FREQUENCY: f64 = 60.0;
@@ -9,16 +10,12 @@ pub struct LightController {
 }
 
 impl LightController {
-    pub fn new(
-        gpio: Gpio,
-        red_pin_number: u8,
-        green_pin_number: u8,
-        blue_pin_number: u8,
-    ) -> anyhow::Result<Self> {
+    pub fn new(gpio: Gpio, color: Color) -> anyhow::Result<Self> {
+        let (red, green, blue) = color.to_tuple();
         Ok(Self {
-            red_pin: gpio.get(red_pin_number)?.into_output(),
-            green_pin: gpio.get(green_pin_number)?.into_output(),
-            blue_pin: gpio.get(blue_pin_number)?.into_output(),
+            red_pin: gpio.get(red)?.into_output(),
+            green_pin: gpio.get(green)?.into_output(),
+            blue_pin: gpio.get(blue)?.into_output(),
         })
     }
 
@@ -27,7 +24,8 @@ impl LightController {
         Ok(())
     }
 
-    pub fn set_color(&mut self, red: u8, green: u8, blue: u8) -> anyhow::Result<()> {
+    pub fn set_color(&mut self, color: Color) -> anyhow::Result<()> {
+        let (red, green, blue) = color.to_tuple();
         Self::set_channel(&mut self.red_pin, red)?;
         Self::set_channel(&mut self.green_pin, green)?;
         Self::set_channel(&mut self.blue_pin, blue)?;
