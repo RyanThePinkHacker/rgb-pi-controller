@@ -1,3 +1,5 @@
+use std::sync::{Arc, Mutex};
+
 use common::Color;
 use rocket::{serde::json::Json, State};
 
@@ -8,6 +10,18 @@ pub struct ServerState {
 }
 
 #[get("/rgb")]
-pub fn rgb_get(state: &State<ServerState>) -> Json<&Color> {
-    Json(state.light_controller.get_color())
+pub fn rgb_get(state: &State<Arc<Mutex<ServerState>>>) -> Json<Color> {
+    let state_unlocked = state.lock().expect("Mutex lock failed.");
+    let current_color = state_unlocked.light_controller.get_color().clone();
+    Json(current_color)
+}
+
+#[get("/rgb/<hex>")]
+pub fn rgb_post(state: &State<Arc<Mutex<ServerState>>>, hex: &str) {
+    state
+        .lock()
+        .expect("Mutex lock failed.")
+        .light_controller
+        .set_color(Color::from_hex_string(hex).expect(&format!("Invalid hex color: {}.", hex)))
+        .expect("Failed to set color.");
 }

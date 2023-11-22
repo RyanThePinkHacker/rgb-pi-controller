@@ -1,3 +1,5 @@
+use std::sync::{Arc, Mutex};
+
 use api::ServerState;
 use controller::LightController;
 use rppal::gpio::Gpio;
@@ -17,8 +19,8 @@ async fn main() -> anyhow::Result<()> {
     let gpio = Gpio::new()?;
     let light_controller = LightController::new(gpio, RED_PIN, GREEN_PIN, BLUE_PIN)?;
     rocket::build()
-        .mount("/", routes![api::rgb_get])
-        .manage(ServerState { light_controller })
+        .mount("/", routes![api::rgb_get, api::rgb_post])
+        .manage(Arc::new(Mutex::new(ServerState { light_controller })))
         .launch()
         .await?;
     Ok(())

@@ -3,7 +3,7 @@ use std::default::Default;
 use common::Color;
 use rppal::gpio::{Gpio, OutputPin};
 
-const PWD_FREQUENCY: f64 = 60.0;
+const PWD_FREQUENCY: f64 = 120.0; // Hz
 
 pub struct LightController {
     red_pin: OutputPin,
