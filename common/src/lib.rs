@@ -27,6 +27,17 @@ impl Color {
     }
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PWM {
+    frequency: f64,
+}
+
+impl PWM {
+    pub fn new(frequency: f64) -> Self {
+        Self { frequency }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

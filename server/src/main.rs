@@ -19,7 +19,17 @@ async fn main() -> anyhow::Result<()> {
     let gpio = Gpio::new()?;
     let light_controller = LightController::new(gpio, RED_PIN, GREEN_PIN, BLUE_PIN)?;
     rocket::build()
-        .mount("/", routes![api::rgb_get, api::rgb_post])
+        .attach(api::Cors)
+        .mount(
+            "/",
+            routes![
+                api::index,
+                api::rgb_get,
+                api::rgb_post,
+                api::pwm_get,
+                api::pwm_post,
+            ],
+        )
         .manage(Arc::new(Mutex::new(ServerState { light_controller })))
         .launch()
         .await?;

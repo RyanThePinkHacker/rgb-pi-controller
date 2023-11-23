@@ -3,13 +3,12 @@ use std::default::Default;
 use common::Color;
 use rppal::gpio::{Gpio, OutputPin};
 
-const PWD_FREQUENCY: f64 = 120.0; // Hz
-
 pub struct LightController {
     red_pin: OutputPin,
     green_pin: OutputPin,
     blue_pin: OutputPin,
-    current_color: Color,
+    color: Color,
+    pwm_frequency: f64,
 }
 
 impl LightController {
@@ -23,25 +22,32 @@ impl LightController {
             red_pin: gpio.get(red_pin_number)?.into_output(),
             green_pin: gpio.get(green_pin_number)?.into_output(),
             blue_pin: gpio.get(blue_pin_number)?.into_output(),
-            current_color: Default::default(),
+            color: Default::default(),
+            pwm_frequency: 60.0,
         })
     }
 
-    fn set_channel(pin: &mut OutputPin, value: u8) -> anyhow::Result<()> {
-        pin.set_pwm_frequency(PWD_FREQUENCY, value as f64 / 255.0)?;
+    pub fn set_color(&mut self, color: Color) -> anyhow::Result<()> {
+        self.color = color.clone();
+        let (red, green, blue) = color.to_tuple();
+        self.red_pin
+            .set_pwm_frequency(self.pwm_frequency, red as f64 / 255.0)?;
+        self.green_pin
+            .set_pwm_frequency(self.pwm_frequency, green as f64 / 255.0)?;
+        self.blue_pin
+            .set_pwm_frequency(self.pwm_frequency, blue as f64 / 255.0)?;
         Ok(())
     }
 
-    pub fn set_color(&mut self, color: Color) -> anyhow::Result<()> {
-        let (red, green, blue) = color.clone().to_tuple();
-        self.current_color = color;
-        Self::set_channel(&mut self.red_pin, red)?;
-        Self::set_channel(&mut self.green_pin, green)?;
-        Self::set_channel(&mut self.blue_pin, blue)?;
-        Ok(())
+    pub fn set_pwm_frequency(&mut self, frequency: f64) {
+        self.pwm_frequency = frequency;
+    }
+
+    pub fn get_pwm_frequency(&self) -> f64 {
+        self.pwm_frequency
     }
 
     pub fn get_color(&self) -> &Color {
-        &self.current_color
+        &self.color
     }
 }
