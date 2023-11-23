@@ -1,0 +1,13 @@
+[Unit]
+Description=RGB controller with a web API
+After=network.target
+
+[Service]
+Environment=ROCKET_ADDRESS=192.168.5.138
+ExecStart=rgb_controller
+Type=simple
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
